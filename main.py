@@ -16,10 +16,11 @@ from matplotlib.pyplot import imshow
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from keras import backend as K
+import time
 
 
 
-histarray={'PEACE':0, 'PUNCH':0, 'STOP': 0, 'Thumbs Up':0}
+histarray={'CLOSED':0, 'TWO':0}
 
 
 def load_model():
@@ -28,16 +29,17 @@ def load_model():
         loaded_model_json = json_file.read()
         json_file.close()
         model = model_from_json(loaded_model_json)
-        model.load_weights("weights.hdf5")
+        model.load_weights("weights1.hdf5")
         print("Model successfully loaded from disk.")
         
         #compile again
         model.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
         return model
     except:
-        print("""Model not found. Please train the CNN by running the script 
-cnn_train.py. Note that the training and test samples should be properly 
-set up in the dataset directory.""")
+#         print("""Model not found. Please train the CNN by running the script 
+# cnn_train.py. Note that the training and test samples should be properly 
+# set up in the dataset directory.""")
+        # print("model not found")
         return None
     
     
@@ -82,14 +84,18 @@ def realtime():
     
     if vc.isOpened(): #get the first frame
         rval, frame = vc.read()
+        # print(frame)
+        # print(rval)
         
     else:
         rval = False
     
-    classes=["peace","punch","stop","thumbs_up"]
+    classes=["closed","two"]
     
     while rval:
         frame=cv2.flip(frame,1)
+        print(frame)
+        # print(rval)
         cv2.rectangle(frame,(300,200),(500,400),(0,255,0),1)
         cv2.putText(frame,"Place your hand in the green box.", (50,50), cv2.FONT_HERSHEY_PLAIN , 1, 255)
         cv2.putText(frame,"Press esc to exit.", (50,100), cv2.FONT_HERSHEY_PLAIN , 1, 255)
@@ -103,13 +109,14 @@ def realtime():
         test_datagen = ImageDataGenerator(rescale=1./255)
         m=test_datagen.flow(frame,batch_size=1)
         y_pred=model.predict_generator(m,1)
-        histarray2={'PEACE': y_pred[0][0], 'PUNCH': y_pred[0][1], 'STOP': y_pred[0][2], 'Thumbs Up': y_pred[0][3]}
+        histarray2={'CLOSED': y_pred[0][0], 'TWO': y_pred[0][1]}
         update(histarray2)
         print(classes[list(y_pred[0]).index(y_pred[0].max())])
         rval, frame = vc.read()
         key = cv2.waitKey(20)
         if key == 27: # exit on ESC
             break
+        # time.sleep(0.5)
     cv2.destroyWindow("preview")
     vc=None
     
@@ -130,7 +137,7 @@ if model is not None:
         ax1 = fig.add_subplot(1, 1, 1)
         
         def animate(i): 
-            xar= [1, 2, 3, 4]
+            xar= [1, 2]
             yar = []
             xtitles = ['']
             for items in histarray:
