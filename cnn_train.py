@@ -44,7 +44,7 @@ model.add(Dense(output_dim = 150, activation = 'relu',
                 kernel_regularizer=regularizers.l2(0.01)))
 
 #output layer
-model.add(Dense(output_dim = 5, activation = 'sigmoid'))
+model.add(Dense(output_dim = 4, activation = 'sigmoid'))
 
 
 #Now copile it
@@ -82,9 +82,9 @@ test_set=test_datagen.flow_from_directory("dataset/test_set",
 #finally, start training
 model.fit_generator(training_set,
                          samples_per_epoch = 1956,
-                         nb_epoch = 100,
+                         nb_epoch = 50,
                          validation_data = test_set,
-                         nb_val_samples = 289)
+                         nb_val_samples = 100)
 
 
 #after 10 epochs:
@@ -103,20 +103,20 @@ with open("model.json", "w") as model_file:
 print("Model has been saved.")
 
 
-#testing it to a random image from the test set
-img = load_img('/Users/daaniyaal/Desktop/cnn/dataset/test_set/left/left-00015.jpg',target_size=(200,200))
-x=array(img)
-img = cv2.cvtColor( x, cv2.COLOR_RGB2GRAY )
-img=img.reshape((1,)+img.shape)
-img=img.reshape(img.shape+(1,))
+# #testing it to a random image from the test set
+# img = load_img('/Users/daaniyaal/Desktop/cnn/dataset/test_set/left/left-00015.jpg',target_size=(200,200))
+# x=array(img)
+# img = cv2.cvtColor( x, cv2.COLOR_RGB2GRAY )
+# img=img.reshape((1,)+img.shape)
+# img=img.reshape(img.shape+(1,))
 
-test_datagen = ImageDataGenerator(rescale=1./255)
-m=test_datagen.flow(img,batch_size=1)
-y_pred=model.predict_generator(m,1)
+# test_datagen = ImageDataGenerator(rescale=1./255)
+# m=test_datagen.flow(img,batch_size=1)
+# y_pred=model.predict_generator(m,1)
 
 
-#save the model schema in a pic
-plot_model(model, to_file='model.png', show_shapes = True)
+# #save the model schema in a pic
+# plot_model(model, to_file='model.png', show_shapes = True)
 
 
 

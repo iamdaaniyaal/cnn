@@ -19,7 +19,8 @@ from keras import backend as K
 
 
 
-histarray={'PEACE':0, 'PUNCH':0, 'STOP': 0, 'Thumbs Up':0}
+# histarray={'LEFT':0, 'RIGHT':0, 'OPEN': 0, 'CLOSED':0, 'THUMBS UP':0}
+histarray={'LEFT':0, 'RIGHT':0, 'OPEN': 0, 'CLOSED':0}
 
 
 def load_model():
@@ -104,6 +105,7 @@ def realtime():
         test_datagen = ImageDataGenerator(rescale=1./255)
         m=test_datagen.flow(frame,batch_size=1)
         y_pred=model.predict_generator(m,1)
+        # histarray2={'CLOSED': y_pred[0][0], 'LEFT': y_pred[0][1], 'OPEN': y_pred[0][2], 'RIGHT': y_pred[0][3], 'THUMBS UP': y_pred[0][4]}
         histarray2={'CLOSED': y_pred[0][0], 'LEFT': y_pred[0][1], 'OPEN': y_pred[0][2], 'RIGHT': y_pred[0][3]}
         update(histarray2)
         print(classes[list(y_pred[0]).index(y_pred[0].max())])
